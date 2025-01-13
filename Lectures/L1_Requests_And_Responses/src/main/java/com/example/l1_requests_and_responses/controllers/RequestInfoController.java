@@ -4,6 +4,7 @@ package com.example.l1_requests_and_responses.controllers;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,7 +56,7 @@ public class RequestInfoController {
     Using a Map automatically serializes into JSON when returned from a @RestController.
     Spring Boot's built-in Jackson library converts it into the structured JSON format you see in the browser
     */
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> displayRequestInfo(HttpServletRequest request, HttpServletResponse response) {
         //Set a cookie to include in the response
         Cookie cookie = new Cookie("EmailCookie", "alan.ryan@tus.ie");
