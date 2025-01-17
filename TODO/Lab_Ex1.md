@@ -83,7 +83,7 @@ public class NewsController {
 
         //TODO: Return plain text if Accept header is "text/plain"
 
-        //TODO: If no acceptable format is found, return 406 Not Acceptable
+        //If no acceptable format is found, return 406 Not Acceptable
         return ResponseEntity.status(406).body("406 - Not Acceptable");
     }
 }
@@ -173,10 +173,6 @@ Retry-After: 300
 | **Trying to retrieve article #2 without setting the Accept header. The server responds with the default format - JSON** |
 
 <br>
-  
-**_Consider the following enhancement_**  
-Add support for YAML if the accept header is **Accept: application/x-yaml**
-
 
 
 ## Task Two : Custom Error Handling in a Banking API
@@ -239,9 +235,6 @@ public class BankController {
 | **Server returns a 404 Not Found for a bank account number that doesnt not exist in the system** |
 
 <br>
-
-**_Consider the following enhancement_**  
-Implement a global `@ControllerAdvice` to handle these errors adding two custom Exception classes to your solution `InvalidAccountException` (for invalid account number formats) and `AccountNotFoundException` (for non-existent accounts)  
 
 
  
