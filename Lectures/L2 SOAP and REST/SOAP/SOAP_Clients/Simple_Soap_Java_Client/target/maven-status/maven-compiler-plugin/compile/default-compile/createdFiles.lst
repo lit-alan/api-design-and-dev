@@ -1,0 +1,6 @@
+com\example\client\HelloServiceService.class
+com\example\client\package-info.class
+com\example\client\ObjectFactory.class
+com\example\client\HelloService.class
+com\example\client\SayHello.class
+com\example\client\SayHelloResponse.class
