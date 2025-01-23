@@ -426,7 +426,7 @@ class ProductControllerQueryParam {
 
 Example:  
 Client includes `X-API-Version: 1` in the request header to receive v1 format.  
-Client includes `X-API-Version: 2` in the request header to receive v1 format.  
+Client includes `X-API-Version: 2` in the request header to receive v2 format.  
 If no header is sent in the request, the response should default to v1      
 
 
