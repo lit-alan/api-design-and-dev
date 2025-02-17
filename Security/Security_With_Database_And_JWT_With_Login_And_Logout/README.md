@@ -46,25 +46,19 @@ _Blacklisting is the process of marking tokens as invalid so they can no longer 
 
 ## 🔄 Token Lifecycle Diagram
 (1) User Logs In  
-       │  
-      ▼  
+      ⬇️   
 (2) Can Access Protected Endpoint(s) (as long as the send the access token with each request)  
-       │  
-      ▼    
-(3) Access Token Expires ────► ❌ 401 Unauthorized  
-      │  
-      ▼    
+      ⬇️       
+(3) Access Token Expires ➡️ ❌ 401 Unauthorized  
+      ⬇️     
 (4) Refresh Token Used  
-       │  
-      ▼    
+       ⬇️    
 (5) Access Token Refreshed  
-       │  
-      ▼    
-✅ New Access Token Issued  
-✅ Same Refresh Token (until expiry)  
-       │  
-      ▼  
-(6) User Logs Out ────► (7) Refresh Token Deleted ────► (8) Must Log In Again
+       ⬇️      
+(5.1) New Access Token Issued  
+(5.2) Same Refresh Token (until expiry)  
+       ⬇️   
+(6) User Logs Out ➡️ (7) Refresh Token Deleted ➡️ (8) Must Log In Again
 
 
 
