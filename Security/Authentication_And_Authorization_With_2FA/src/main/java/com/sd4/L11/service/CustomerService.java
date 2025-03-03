@@ -22,7 +22,8 @@ public class CustomerService  implements UserDetailsService {
 
     private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
 
-    @Autowired
+
+   @Autowired
     private CustomerRepository customerRepository;
 
     /*
