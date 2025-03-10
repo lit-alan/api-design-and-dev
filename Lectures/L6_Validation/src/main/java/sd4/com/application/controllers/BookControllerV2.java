@@ -21,68 +21,68 @@ public class BookControllerV2 {
     @Autowired
     private JsonSchemaValidator jsonSchemaValidator;
 
-    @PostMapping
-    public ResponseEntity<String> addBook(@RequestBody String bookJson) {
-        try {
-            jsonSchemaValidator.validateJson(bookJson);
-
-            // Convert the json string to a Book object (Deserialization)
-            ObjectMapper objectMapper = new ObjectMapper();
-            Book b = objectMapper.readValue(bookJson, Book.class);
-
-            bookService.saveBook(b);
-            return ResponseEntity.ok("Book entity is valid and has been added");
-        }
-        catch (ValidationException e) {
-            return ResponseEntity.badRequest().body("Invalid JSON: " + String.join("; ", e.getAllMessages()));
-        }
-        catch (Exception e) {
-            return ResponseEntity.badRequest().body("Invalid JSON: " + e.getMessage());
-        }
-    }
-
-
-    //use this version of addBook and the ErrorResponse class below
-    //to customise the error messages returned
 //    @PostMapping
-//    public ResponseEntity<?> addBook(@RequestBody String bookJson) {
-//
+//    public ResponseEntity<String> addBook(@RequestBody String bookJson) {
 //        try {
-//            List<String> errors = jsonSchemaValidator.validateJson(bookJson);
+//            jsonSchemaValidator.validateJson(bookJson);
 //
-//            if (!errors.isEmpty()) {
-//                return ResponseEntity.badRequest().body(
-//                        new ErrorResponse("Invalid JSON", errors)
-//                );
-//            }
-//
-//            //Convert the json string to a Book object (Deserialization)
+//            // Convert the json string to a Book object (Deserialization)
 //            ObjectMapper objectMapper = new ObjectMapper();
 //            Book b = objectMapper.readValue(bookJson, Book.class);
 //
 //            bookService.saveBook(b);
-//
 //            return ResponseEntity.ok("Book entity is valid and has been added");
-//        } catch (Exception e) {
+//        }
+//        catch (ValidationException e) {
+//            return ResponseEntity.badRequest().body("Invalid JSON: " + String.join("; ", e.getAllMessages()));
+//        }
+//        catch (Exception e) {
 //            return ResponseEntity.badRequest().body("Invalid JSON: " + e.getMessage());
 //        }
 //    }
-//
-//    static class ErrorResponse {
-//        private final String message;
-//        private final List<String> errors;
-//
-//        public ErrorResponse(String message, List<String> errors) {
-//            this.message = message;
-//            this.errors = errors;
-//        }
-//
-//        public String getMessage() {
-//            return message;
-//        }
-//
-//        public List<String> getErrors() {
-//            return errors;
-//        }
-//    }
+
+
+    //use this version of addBook and the ErrorResponse class below
+    //to customise the error messages returned
+    @PostMapping
+    public ResponseEntity<?> addBook(@RequestBody String bookJson) {
+
+        try {
+            List<String> errors = jsonSchemaValidator.validateJson(bookJson);
+
+            if (!errors.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                        new ErrorResponse("Invalid JSON", errors)
+                );
+            }
+
+            //Convert the json string to a Book object (Deserialization)
+            ObjectMapper objectMapper = new ObjectMapper();
+            Book b = objectMapper.readValue(bookJson, Book.class);
+
+            bookService.saveBook(b);
+
+            return ResponseEntity.ok("Book entity is valid and has been added");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Invalid JSON: " + e.getMessage());
+        }
+    }
+
+    static class ErrorResponse {
+        private final String message;
+        private final List<String> errors;
+
+        public ErrorResponse(String message, List<String> errors) {
+            this.message = message;
+            this.errors = errors;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public List<String> getErrors() {
+            return errors;
+        }
+    }
 }

@@ -35,35 +35,35 @@ public class JsonSchemaValidator {
         }
     }
 //
-    public void validateJson(String json) {
-        JSONObject jsonObject = new JSONObject(json);
-
-        //This line throws an exception if invalid
-        schema.validate(jsonObject);
-    }
+//    public void validateJson(String json) {
+//        JSONObject jsonObject = new JSONObject(json);
+//
+//        //This line throws an exception if invalid
+//        schema.validate(jsonObject);
+//    }
 
     //use this version of validateJson and the formatValidationErrors method below to
     //customise the error messages returned
-//    public List<String> validateJson(String json) {
-//        try {
-//            JSONObject jsonObject = new JSONObject(json);
-//            //This line throws an exception if invalid
-//            schema.validate(jsonObject);
-//            return List.of();
-//        } catch (ValidationException e) {
-//            return formatValidationErrors(e);
-//        }
-//    }
-//
-//    private List<String> formatValidationErrors(ValidationException e) {
-//        return e.getAllMessages().stream()
-//                //Remove JSON Pointer notation
-//                .map(msg -> msg.replace("#/", "").replace("#", "Root"))
-//                //Remove regex pattern from error messages returned
-//                .map(msg -> msg.replaceAll("does not match pattern \\^.*\\$", "is invalid"))
-//                .map(msg -> msg.replace("is not of type", "must be of type"))
-//                .map(msg -> msg.replace("must have a minimum value", "must be at least"))
-//                .collect(Collectors.toList());
-//    }
+    public List<String> validateJson(String json) {
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            //This line throws an exception if invalid
+            schema.validate(jsonObject);
+            return List.of();
+        } catch (ValidationException e) {
+            return formatValidationErrors(e);
+        }
+    }
+
+    private List<String> formatValidationErrors(ValidationException e) {
+        return e.getAllMessages().stream()
+                //Remove JSON Pointer notation
+                .map(msg -> msg.replace("#/", "").replace("#", "Root"))
+                //Remove regex pattern from error messages returned
+                .map(msg -> msg.replaceAll("does not match pattern \\^.*\\$", "is invalid"))
+                .map(msg -> msg.replace("is not of type", "must be of type"))
+                .map(msg -> msg.replace("must have a minimum value", "must be at least"))
+                .collect(Collectors.toList());
+    }
 
 }

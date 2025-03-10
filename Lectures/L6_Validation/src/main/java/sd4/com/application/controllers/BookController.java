@@ -11,6 +11,7 @@ import sd4.com.application.model.Book;
 import sd4.com.application.service.BookService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,6 +21,11 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
+    @GetMapping("")
+    public List<Book> getAllBooks() {
+        return bookService.findAll();
+
+    }
     @PostMapping("")
     public ResponseEntity add(@Valid @RequestBody Book b) {
         bookService.saveBook(b);
