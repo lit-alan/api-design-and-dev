@@ -1,0 +1,23 @@
+type Author {
+    authorID: ID!
+    firstName: String!
+    lastName: String!
+    yearBorn: Int
+}
+
+# Queries (read operations)
+type Query {
+    authorById(id: ID!): Author
+    allAuthors: [Author]!
+    findAuthorsByLastName(lastName: String!): [Author]!
+    findByFirstNameAndYearBorn(firstName: String!, yearBorn: Int!): [Author]!
+}
+
+# Mutations (write operations)
+type Mutation {
+    createAuthor(firstName: String!, lastName: String!, yearBorn: Int): Author!
+    updateAuthor(id: ID!, firstName: String, lastName: String, yearBorn: Int): Author
+    deleteAuthor(id: ID!): Boolean
+}
+
+
