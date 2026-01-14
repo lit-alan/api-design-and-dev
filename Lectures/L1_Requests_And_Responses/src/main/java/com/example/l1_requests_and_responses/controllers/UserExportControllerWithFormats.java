@@ -3,6 +3,9 @@ package com.example.l1_requests_and_responses.controllers;
 import com.example.l1_requests_and_responses.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,10 +29,15 @@ import java.util.List;
  *     <li><b>XML</b> - Extensible Markup Language</li>
  * </ul>
  *
- * <p><b>Specify the format using the request header:</b> <code>Accept-Format: xml</code></p>
+ * <p><b>Specify the format using the standard HTTP request header:</b></p>
+ * <ul>
+ *     <li><code>Accept: application/json</code></li>
+ *     <li><code>Accept: application/xml</code></li>
+ *     <li><code>Accept: text/tab-separated-values</code></li>
+ * </ul>
  *
  * @author Alan Ryan
- * @version 1.2
+ * @version 1.3
  */
 @RestController
 @RequestMapping("/export-users/v2")
@@ -44,29 +52,31 @@ public class UserExportControllerWithFormats {
     );
 
     /**
-     * Exports users in the format specified by the request header "Accept-Format".
+     * Exports users in the format specified by the standard HTTP Accept header.
      *
      * @param response     The HTTP response where headers are set for file export.
-     * @param acceptFormat The requested output format ("tsv", "json", "xml").
+     * @param acceptHeader The requested response media type (e.g. application/json, application/xml).
      * @throws IOException If an error occurs while writing to the response.
      */
+
     @GetMapping
     public void exportUsers(HttpServletResponse response,
-                            @RequestHeader(value = "Accept-Format", defaultValue = "tsv") String acceptFormat)
+                            @RequestHeader(value = "Accept", defaultValue = "text/tab-separated-values")
+                            String acceptHeader)
             throws IOException {
-        switch (acceptFormat.toLowerCase()) {
-            case "json":
-                exportAsJson(response);
-                break;
-            case "xml":
-                exportAsXml(response);
-                break;
-            case "tsv":
-            default:
-                exportAsTsv(response);
-                break;
+
+        if (acceptHeader.contains("application/json")) {
+            exportAsJson(response);
+        } else if (acceptHeader.contains("application/xml")) {
+            exportAsXml(response);
+        } else {
+            exportAsTsv(response);
         }
     }
+
+    ////////////////////////////////////////////////////////////
+    //TSV Support
+    ////////////////////////////////////////////////////////////
 
     private void exportAsTsv(HttpServletResponse response) throws IOException {
         response.setContentType("application/vnd.ms-excel");
@@ -84,6 +94,10 @@ public class UserExportControllerWithFormats {
         return tsv.toString();
     }
 
+    ////////////////////////////////////////////////////////////
+    //JSON Support
+    ////////////////////////////////////////////////////////////
+
     private void exportAsJson(HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         response.setHeader("Content-Disposition", "attachment; filename=users.json");
@@ -91,6 +105,21 @@ public class UserExportControllerWithFormats {
         ObjectMapper objectMapper = new ObjectMapper();
         response.getWriter().write(objectMapper.writeValueAsString(USERS));
     }
+
+//    //JSON: Get Spring + Jackson to serialize List<User> automatically
+//    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<List<User>> exportUsersAsJson() {
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=users.json")
+//                .body(USERS);
+//    }
+
+
+
+    ////////////////////////////////////////////////////////////
+    //XML Support
+    ////////////////////////////////////////////////////////////
+
 
     private void exportAsXml(HttpServletResponse response) throws IOException {
         response.setContentType("application/xml");
@@ -100,5 +129,12 @@ public class UserExportControllerWithFormats {
         response.getWriter().write(xmlMapper.writeValueAsString(USERS));
     }
 
+//    //XML: Get Spring to serialize automatically (requires jackson-dataformat-xml on the classpath)
+//    @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
+//    public ResponseEntity<List<User>> exportUsersAsXml() {
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=users.xml")
+//                .body(USERS);
+//    }
 
 }
