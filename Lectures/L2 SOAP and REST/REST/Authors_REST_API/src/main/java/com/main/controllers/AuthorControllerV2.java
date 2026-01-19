@@ -92,8 +92,8 @@ public class AuthorControllerV2 {
         return authorService.count();
     }
 
-    // (1) Typed ResponseEntity<Void>
-    // (3) DELETE returns 404 if missing, otherwise 204 No Content
+    //ResponseEntity<Void> is a Spring type that represents an HTTP response with no response body
+    //DELETE returns 404 if missing, otherwise 204 No Content
     @DeleteMapping("/authors/{id}")
     public ResponseEntity<Void> delete(@PathVariable long id) {
         if (authorService.findOne(id).isEmpty()) {
@@ -132,12 +132,7 @@ public class AuthorControllerV2 {
     public List<Author> getAllByInfix(@PathVariable String infix) {
         return authorService.findByfirstNameContaining(infix);
     }
-//
-//    // (5) Fix: last-name suffix endpoint should call the last-name suffix service method
-//    @GetMapping("/authors/findby/lastname/suffix/{suffix}")
-//    public List<Author> findBylastNameEndingWith(@PathVariable String suffix) {
-//        return authorService.find);
-//    }
+
 
     @GetMapping("/authors/bornbetween/{start}/{end}")
     public List<Author> getBornBetween(@PathVariable Integer start, @PathVariable Integer end) {
