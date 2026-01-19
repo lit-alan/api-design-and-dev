@@ -30,7 +30,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/api/v2/")
+@RequestMapping("/api/v2/authors/")
 public class AuthorControllerV2 {
 
     @Autowired
@@ -39,7 +39,7 @@ public class AuthorControllerV2 {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    @GetMapping(value = "/authors/{id}/image", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/{id}/image", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<Resource> getAuthorImage(@PathVariable Long id) {
         Resource resource = resourceLoader.getResource("classpath:/static/assets/images/" + id + ".png");
         if (resource.exists() && resource.isReadable()) {
@@ -54,7 +54,7 @@ public class AuthorControllerV2 {
         }
     }
 
-    @GetMapping(value = "/authors/images-zip", produces = "application/zip")
+    @GetMapping(value = "/images-zip", produces = "application/zip")
     public ResponseEntity<Resource> downloadImagesZip() throws IOException {
         Resource resource = new ClassPathResource("static/assets/images/all.zip");
 
@@ -75,19 +75,19 @@ public class AuthorControllerV2 {
                 .body(resource);
     }
 
-    @GetMapping(value = "/authors", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "/", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<Author> getAll() {
         return authorService.findAll();
     }
 
-    @GetMapping(value = "/authors/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Author> getOne(@PathVariable long id) {
         Optional<Author> o = authorService.findOne(id);
         return o.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/authors/count")
+    @GetMapping("/count")
     public long getCount() {
         return authorService.count();
     }
@@ -104,7 +104,7 @@ public class AuthorControllerV2 {
     }
 
     //This endpoint will return a 201 Created + Location header for the new resource
-    @PostMapping(value = "/authors", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PostMapping(value = "/", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> add(@RequestBody Author a) {
         Author saved = authorService.saveAuthor(a);
 
@@ -117,34 +117,34 @@ public class AuthorControllerV2 {
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping(value = "/authors", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PutMapping(value = "/", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Void> edit(@RequestBody Author a) {
         authorService.saveAuthor(a);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/authors/findby/firstname/prefix/{prefix}")
+    @GetMapping("/findby/firstname/prefix/{prefix}")
     public List<Author> getAllByPrefix(@PathVariable String prefix) {
         return authorService.findByFirstNameNameStartingWith(prefix);
     }
 
-    @GetMapping("/authors/findby/firstname/infix/{infix}")
+    @GetMapping("/findby/firstname/infix/{infix}")
     public List<Author> getAllByInfix(@PathVariable String infix) {
         return authorService.findByfirstNameContaining(infix);
     }
 
 
-    @GetMapping("/authors/bornbetween/{start}/{end}")
+    @GetMapping("/bornbetween/{start}/{end}")
     public List<Author> getBornBetween(@PathVariable Integer start, @PathVariable Integer end) {
         return authorService.findAuthorByYearBornBetweenOrderByFirstName(start, end);
     }
 
-    @GetMapping("/authors/bornBefore/{yearBorn}")
+    @GetMapping("/bornBefore/{yearBorn}")
     public List<Author> findByyearBornLessThanEqual(@PathVariable int yearBorn) {
         return authorService.findByyearBornLessThanEqual(yearBorn);
     }
 
-    @GetMapping("/authors/avg/yearborn/")
+    @GetMapping("/avg/yearborn/")
     public int getAvgYearBorn() {
         return authorService.getAvgYearBorn();
     }

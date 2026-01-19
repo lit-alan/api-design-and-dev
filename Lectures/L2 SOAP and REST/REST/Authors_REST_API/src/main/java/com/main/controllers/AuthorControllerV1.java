@@ -10,18 +10,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1/authors/")
 public class AuthorControllerV1 {
 
     @Autowired
     private AuthorService authorService;
 
-    @GetMapping("/authors")
+    @GetMapping("/")
     public List<Author> getAll() {
         return authorService.findAll();
     }
 
-    @GetMapping("/authors/{id}")
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(@PathVariable long id) {
+        authorService.deleteByID(id);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+    @GetMapping("/{id}")
     public ResponseEntity<Author> getOne(@PathVariable long id) {
         Optional<Author> o = authorService.findOne(id);
 
@@ -31,24 +36,20 @@ public class AuthorControllerV1 {
             return ResponseEntity.ok(o.get());
     }
 
-    @GetMapping("/authors/count")
+    @GetMapping("/count")
     public long getCount() {
         return authorService.count();
     }
 
-    @DeleteMapping("/authors/{id}")
-    public ResponseEntity delete(@PathVariable long id) {
-        authorService.deleteByID(id);
-        return new ResponseEntity(HttpStatus.OK);
-    }
 
-    @PostMapping("/authors")
+
+    @PostMapping("/")
     public ResponseEntity add(@RequestBody Author a) {
         authorService.saveAuthor(a);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @PutMapping("/authors")
+    @PutMapping("/")
     public ResponseEntity edit(@RequestBody Author a) {
         authorService.saveAuthor(a);
         return new ResponseEntity(HttpStatus.OK);
