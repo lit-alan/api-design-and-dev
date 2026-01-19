@@ -123,8 +123,8 @@ public class UserExportControllerWithFormats {
 
     private void exportAsXml(HttpServletResponse response) throws IOException {
         response.setContentType("application/xml");
-        response.setHeader("Content-Disposition", "attachment; filename=users.xml");
-
+        response.setHeader("Content-Disposition", "inline");
+        
         XmlMapper xmlMapper = new XmlMapper();
         response.getWriter().write(xmlMapper.writeValueAsString(USERS));
     }
