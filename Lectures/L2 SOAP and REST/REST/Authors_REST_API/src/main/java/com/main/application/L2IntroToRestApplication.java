@@ -14,13 +14,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan({"com.main.service", "com.main.controllers"})
 @EntityScan("com.main.model")
 @EnableJpaRepositories("com.main.repository")
-public class L7IntroToRestApplication implements CommandLineRunner {
+public class L2IntroToRestApplication implements CommandLineRunner {
 
     @Autowired
     private AuthorRepository authorRepo;
 
     public static void main(String[] args) {
-        SpringApplication.run(L7IntroToRestApplication.class, args);
+        SpringApplication.run(L2IntroToRestApplication.class, args);
     }
 
 

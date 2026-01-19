@@ -7,12 +7,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+
+/*
+ * API v2 extends and refines API v1.
+ *
+ * Differences from v1:
+ * - Explicit media type support (JSON/XML) via produces/consumes for clearer content negotiation
+ * - Improved HTTP semantics (typed ResponseEntity, 404 vs 204 for DELETE, 201 + Location on POST)
+ * - Additional read endpoints (search/filtering and aggregate queries)
+ * - Support for binary resources (author images and downloadable ZIP files)
+ *
+ * v1 is retained for backward compatibility; v2 is the preferred API going forward.
+ */
+
 
 @RestController
 @RequestMapping("/api/v2/")
@@ -60,8 +75,6 @@ public class AuthorControllerV2 {
                 .body(resource);
     }
 
-
-
     @GetMapping(value = "/authors", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<Author> getAll() {
         return authorService.findAll();
@@ -69,35 +82,45 @@ public class AuthorControllerV2 {
 
     @GetMapping(value = "/authors/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Author> getOne(@PathVariable long id) {
-       Optional<Author> o =  authorService.findOne(id);
-       
-       if (!o.isPresent()) 
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-         else 
-            return ResponseEntity.ok(o.get());
+        Optional<Author> o = authorService.findOne(id);
+        return o.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
-    
+
     @GetMapping("/authors/count")
     public long getCount() {
         return authorService.count();
     }
-    
+
+    // (1) Typed ResponseEntity<Void>
+    // (3) DELETE returns 404 if missing, otherwise 204 No Content
     @DeleteMapping("/authors/{id}")
-    public ResponseEntity delete(@PathVariable long id) {
+    public ResponseEntity<Void> delete(@PathVariable long id) {
+        if (authorService.findOne(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         authorService.deleteByID(id);
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
+    //This endpoint will return a 201 Created + Location header for the new resource
     @PostMapping(value = "/authors", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity add(@RequestBody Author a) {
-        authorService.saveAuthor(a);
-        return new ResponseEntity(HttpStatus.CREATED);
+    public ResponseEntity<Void> add(@RequestBody Author a) {
+        Author saved = authorService.saveAuthor(a);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()      // /api/v2/authors
+                .path("/{id}")             // /{id}
+                .buildAndExpand(saved.getAuthorID())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
-    @PutMapping(value = "/authors", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity edit(@RequestBody Author a) {
+    @PutMapping(value = "/authors", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<Void> edit(@RequestBody Author a) {
         authorService.saveAuthor(a);
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/authors/findby/firstname/prefix/{prefix}")
@@ -109,11 +132,12 @@ public class AuthorControllerV2 {
     public List<Author> getAllByInfix(@PathVariable String infix) {
         return authorService.findByfirstNameContaining(infix);
     }
-
-    @GetMapping("/authors/findby/lastname/suffix/{suffix}")
-    public List<Author> findBylastNameEndingWith(@PathVariable String suffix) {
-        return authorService.findByFirstNameNameEndingWith(suffix);
-    }
+//
+//    // (5) Fix: last-name suffix endpoint should call the last-name suffix service method
+//    @GetMapping("/authors/findby/lastname/suffix/{suffix}")
+//    public List<Author> findBylastNameEndingWith(@PathVariable String suffix) {
+//        return authorService.find);
+//    }
 
     @GetMapping("/authors/bornbetween/{start}/{end}")
     public List<Author> getBornBetween(@PathVariable Integer start, @PathVariable Integer end) {
@@ -138,35 +162,3 @@ public class AuthorControllerV2 {
 
 
 
-
-
-//    @GetMapping("/authors/avg/yearborn/")
-//    public int getAvgYearBorn() {
-//        return authorService.getAvgYearBorn();
-//    }
-//
-//
-//    @GetMapping("/authors/bornbetween/{start}/{end}")
-//    public List<Author> getBornBetween(@PathVariable Integer start, @PathVariable Integer end) {
-//        return authorService.findAuthorByYearBornBetweenOrderByFirstName(start, end);
-//    }
-//
-//    @GetMapping("/authors/bornBefore/{yearBorn}")
-//    public List<Author> findByyearBornLessThanEqual(@PathVariable int yearBorn) {
-//        return authorService.findByyearBornLessThanEqual(yearBorn);
-//    }
-//
-//    @GetMapping("/authors/findby/firstname/prefix/{prefix}")
-//    public List<Author> getAllByPrefix(@PathVariable String prefix) {
-//        return authorService.findByFirstNameNameStartingWith(prefix);
-//    }
-//
-//    @GetMapping("/authors/findby/firstname/infix/{infix}")
-//    public List<Author> getAllByInfix(@PathVariable String infix) {
-//        return authorService.findByfirstNameContaining(infix);
-//    }
-//
-//    @GetMapping("/authors/findby/lastname/suffix/{suffix}")
-//    public List<Author> findBylastNameEndingWith(@PathVariable String suffix) {
-//        return authorService.findBylastNameEndingWith(suffix);
-//    }

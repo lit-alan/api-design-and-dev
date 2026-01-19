@@ -31,8 +31,8 @@ public class AuthorService  {
         authorRepo.deleteById(authorID);
     }
 
-    public void saveAuthor(Author a) {
-        authorRepo.save(a);
+    public Author saveAuthor(Author a) {
+        return authorRepo.save(a);
     }
 
     public List<Author> findByFirstNameNameStartingWith(String prefix) {
