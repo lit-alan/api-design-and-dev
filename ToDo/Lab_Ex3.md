@@ -263,7 +263,7 @@ However, there is currently no validation on the start and end values. What happ
 We will add validation to the start and end path parameters to restrict the allowable year range, enforcing a minimum value of 1000 and a maximum value of 2026. Firstly, replace the existing endpoint with the following:
 
 ```java
-@GetMapping("/authors/bornbetween/{start}/{end}")
+@GetMapping("/bornbetween/{start}/{end}")
 public List<Author> getBornBetween(
         @PathVariable @Min(1000) @Max(2026) Integer start,
         @PathVariable @Min(1000) @Max(2026) Integer end) {
