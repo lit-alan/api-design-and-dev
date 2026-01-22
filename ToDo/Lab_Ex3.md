@@ -97,6 +97,9 @@ public Map<String, String> handleValidationExceptions(
         errors.put(fieldName, errorMessage);
     });
 
+   return errors;
+}
+
 ```
 ### Test the endpoints in Postman
 
