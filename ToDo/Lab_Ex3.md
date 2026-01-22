@@ -242,7 +242,7 @@ This should leave you with a project that has a structure like this:
 Observe the endpoint 
 
 ```java
- @GetMapping("/authors/bornbetween/{start}/{end}")
+ @GetMapping("/bornbetween/{start}/{end}")
     public List<Author> getBornBetween(
             @PathVariable Integer start,
             @PathVariable Integer end) {
