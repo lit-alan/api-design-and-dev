@@ -1,36 +1,21 @@
 
-package com.main.controllers;
+package com.example.l3_adding_hateoas_to_an_api.controllers;
 
-import com.main.model.Author;
-import com.main.service.AuthorService;
+import com.example.l3_adding_hateoas_to_an_api.model.Author;
+import com.example.l3_adding_hateoas_to_an_api.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.*;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
-/*
- * API v2 extends and refines API v1.
- *
- * Differences from v1:
- * - Explicit media type support (JSON/XML) via produces/consumes for clearer content negotiation
- * - Improved HTTP semantics (typed ResponseEntity, 404 vs 204 for DELETE, 201 + Location on POST)
- * - Additional read endpoints (search/filtering and aggregate queries)
- * - Support for binary resources (author images and downloadable ZIP files)
- *
- * v1 is retained for backward compatibility; v2 is the preferred API going forward.
- */
-
-
 @RestController
-@RequestMapping("/api/v2/authors/")
+@RequestMapping("/api/v2/")
 public class AuthorControllerV2 {
 
     @Autowired
@@ -39,7 +24,7 @@ public class AuthorControllerV2 {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    @GetMapping(value = "/{id}/image", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/authors/{id}/image", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<Resource> getAuthorImage(@PathVariable Long id) {
         Resource resource = resourceLoader.getResource("classpath:/static/assets/images/" + id + ".png");
         if (resource.exists() && resource.isReadable()) {
@@ -54,7 +39,7 @@ public class AuthorControllerV2 {
         }
     }
 
-    @GetMapping(value = "/images-zip", produces = "application/zip")
+    @GetMapping(value = "/authors/images-zip", produces = "application/zip")
     public ResponseEntity<Resource> downloadImagesZip() throws IOException {
         Resource resource = new ClassPathResource("static/assets/images/all.zip");
 
@@ -75,85 +60,74 @@ public class AuthorControllerV2 {
                 .body(resource);
     }
 
-    @GetMapping(value = "/", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+
+
+    @GetMapping(value = "/authors", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<Author> getAll() {
         return authorService.findAll();
     }
 
-    @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "/authors/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<Author> getOne(@PathVariable long id) {
-        Optional<Author> o = authorService.findOne(id);
-        return o.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+       Optional<Author> o =  authorService.findOne(id);
+       
+       if (!o.isPresent()) 
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+         else 
+            return ResponseEntity.ok(o.get());
     }
-
-    @GetMapping("/count")
+    
+    @GetMapping("/authors/count")
     public long getCount() {
         return authorService.count();
     }
-
-    //ResponseEntity<Void> is a Spring type that represents an HTTP response with no response body
-    //DELETE returns 404 if missing, otherwise 204 No Content
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id) {
-        if (authorService.findOne(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+    
+    @DeleteMapping("/authors/{id}")
+    public ResponseEntity delete(@PathVariable long id) {
         authorService.deleteByID(id);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity(HttpStatus.OK);
     }
 
-    //This endpoint will return a 201 Created + Location header for the new resource
-    @PostMapping(value = "/", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<Void> add(@RequestBody Author a) {
-        Author saved = authorService.saveAuthor(a);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()      // /api/v2/authors
-                .path("/{id}")             // /{id}
-                .buildAndExpand(saved.getAuthorID())
-                .toUri();
-
-        return ResponseEntity.created(location).build();
-    }
-
-    @PutMapping(value = "/", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<Void> edit(@RequestBody Author a) {
+    @PostMapping(value = "/authors", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity add(@RequestBody Author a) {
         authorService.saveAuthor(a);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @GetMapping("/findby/firstname/prefix/{prefix}")
+    @PutMapping(value = "/authors", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity edit(@RequestBody Author a) {
+        authorService.saveAuthor(a);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/authors/findby/firstname/prefix/{prefix}")
     public List<Author> getAllByPrefix(@PathVariable String prefix) {
         return authorService.findByFirstNameNameStartingWith(prefix);
     }
 
-    @GetMapping("/findby/firstname/infix/{infix}")
+    @GetMapping("/authors/findby/firstname/infix/{infix}")
     public List<Author> getAllByInfix(@PathVariable String infix) {
         return authorService.findByfirstNameContaining(infix);
     }
 
+    @GetMapping("/authors/findby/lastname/suffix/{suffix}")
+    public List<Author> findBylastNameEndingWith(@PathVariable String suffix) {
+        return authorService.findByFirstNameNameEndingWith(suffix);
+    }
 
-    @GetMapping("/bornbetween/{start}/{end}")
+    @GetMapping("/authors/bornbetween/{start}/{end}")
     public List<Author> getBornBetween(@PathVariable Integer start, @PathVariable Integer end) {
         return authorService.findAuthorByYearBornBetweenOrderByFirstName(start, end);
     }
 
-    @GetMapping("/bornBefore/{yearBorn}")
+    @GetMapping("/authors/bornBefore/{yearBorn}")
     public List<Author> findByyearBornLessThanEqual(@PathVariable int yearBorn) {
         return authorService.findByyearBornLessThanEqual(yearBorn);
     }
 
-    @GetMapping("/avg/yearborn/")
+    @GetMapping("/authors/avg/yearborn/")
     public int getAvgYearBorn() {
         return authorService.getAvgYearBorn();
     }
 
 }
-
-
-
-
-
-
-
