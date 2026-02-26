@@ -1,568 +1,402 @@
 ```java
+import java.util.List;
+
+public class CreateOrderRequest {
+
+    private Integer customerId;
+    private String paymentMethod;
+    private String discountCode; // optional
+    private List<CreateOrderItemRequest> items;
+
+    public CreateOrderRequest() {}
+
+    public Integer getCustomerId() { return customerId; }
+    public void setCustomerId(Integer customerId) { this.customerId = customerId; }
+
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+
+    public String getDiscountCode() { return discountCode; }
+    public void setDiscountCode(String discountCode) { this.discountCode = discountCode; }
+
+    public List<CreateOrderItemRequest> getItems() { return items; }
+    public void setItems(List<CreateOrderItemRequest> items) { this.items = items; }
+}
+
+```
+
+```java
+public class CreateOrderItemRequest {
+
+    private Integer productId;
+    private Integer quantity;
+
+    public CreateOrderItemRequest() {}
+
+    public Integer getProductId() { return productId; }
+    public void setProductId(Integer productId) { this.productId = productId; }
+
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+}
 
 
-public class CreateReviewRequest {
+```
+
+
+```java
+import com.fasterxml.jackson.annotation.JsonInclude;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
+public class OrderV1Response {
 
     private Integer orderId;
-    private Integer customerId;
-    private Integer rating;
-    private String comment;
+    private String orderDate;            //YYYY-MM-DD
+    private String status;
+    private String paymentMethod;
 
-    public CreateReviewRequest() {
-    }
+    private CustomerSummary customer;
+    private List<OrderItemResponse> items;
 
-    public Integer getOrderId() {
-        return orderId;
-    }
+    private int itemCount;
 
-    public void setOrderId(Integer orderId) {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String discountCode;
+
+    private BigDecimal subtotal;
+
+
+    private BigDecimal total;
+    private boolean totalsMatch;
+
+    private List<Map<String, String>> links;
+
+    public OrderV1Response() {}
+
+
+
+    public OrderV1Response(Integer orderId,
+                           String orderDate,
+                           String status,
+                           String paymentMethod,
+                           CustomerSummary customer,
+                           List<OrderItemResponse> items,
+                           int itemCount,
+                           String discountCode,
+                           BigDecimal subtotal,
+                           BigDecimal total,
+                           boolean totalsMatch,
+                           List<Map<String, String>> links) {
         this.orderId = orderId;
+        this.orderDate = orderDate;
+        this.status = status;
+        this.paymentMethod = paymentMethod;
+        this.customer = customer;
+        this.items = items;
+        this.discountCode = discountCode;
+        this.itemCount = itemCount;
+        this.subtotal = subtotal;
+        this.total = total;
+        this.totalsMatch = totalsMatch;
+        this.links = links;
     }
 
-    public Integer getCustomerId() {
-        return customerId;
-    }
+    public Integer getOrderId() { return orderId; }
+    public void setOrderId(Integer orderId) { this.orderId = orderId; }
 
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
-    }
+    public String getOrderDate() { return orderDate; }
+    public void setOrderDate(String orderDate) { this.orderDate = orderDate; }
 
-    public Integer getRating() {
-        return rating;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
-    }
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
 
-    public String getComment() {
-        return comment;
-    }
+    public CustomerSummary getCustomer() { return customer; }
+    public void setCustomer(CustomerSummary customer) { this.customer = customer; }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+    public List<OrderItemResponse> getItems() { return items; }
+    public void setItems(List<OrderItemResponse> items) { this.items = items; }
 
-    
-    
-}
+    public int getItemCount() { return itemCount; }
+    public void setItemCount(int itemCount) { this.itemCount = itemCount; }
 
-```
+    public String getDiscountCode() { return discountCode; }
+    public void setDiscountCode(String discountCode) { this.discountCode = discountCode; }
 
+    public BigDecimal getSubtotal() { return subtotal; }
+    public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
 
+    public BigDecimal getTotal() { return total; }
+    public void setTotal(BigDecimal total) { this.total = total; }
 
-```java
+    public boolean isTotalsMatch() { return totalsMatch; }
+    public void setTotalsMatch(boolean totalsMatch) { this.totalsMatch = totalsMatch; }
 
-
-public class ProductV1Response{
-    private Long productId;
-    private String name;
-    private String description;
-    private double price;
-    private boolean inStock;
-    private int stockQuantity;
-    private Double averageRating;
-    private long reviewCount;
-    private String createdAt; //ISO date
-
-    public ProductV1Response() {}
-
-    public ProductV1Response(Long productId, String name, String description, double price, boolean inStock, int stockQuantity, Double averageRating, long reviewCount, String createdAt) {
-        this.productId = productId;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.inStock = inStock;
-        this.stockQuantity = stockQuantity;
-        this.averageRating = averageRating;
-        this.reviewCount = reviewCount;
-        this.createdAt = createdAt;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public boolean isInStock() {
-        return inStock;
-    }
-
-    public void setInStock(boolean inStock) {
-        this.inStock = inStock;
-    }
-
-    public int getStockQuantity() {
-        return stockQuantity;
-    }
-
-    public void setStockQuantity(int stockQuantity) {
-        this.stockQuantity = stockQuantity;
-    }
-
-    public Double getAverageRating() {
-        return averageRating;
-    }
-
-    public void setAverageRating(Double averageRating) {
-        this.averageRating = averageRating;
-    }
-
-    public long getReviewCount() {
-        return reviewCount;
-    }
-
-    public void setReviewCount(long reviewCount) {
-        this.reviewCount = reviewCount;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    @Override
-    public String toString() {
-        return "ProductV1Response{" +
-                "productId=" + productId +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                ", inStock=" + inStock +
-                ", stockQuantity=" + stockQuantity +
-                ", averageRating=" + averageRating +
-                ", reviewCount=" + reviewCount +
-                ", createdAt='" + createdAt + '\'' +
-                '}';
-    }
+    public List<Map<String, String>> getLinks() { return links; }
+    public void setLinks(List<Map<String, String>> links) { this.links = links; }
 }
 
 
 ```
 
 
+
 ```java
+import java.util.List;
+import java.util.Map;
 
-public class ProductV2Response {
+public class OrderV2Response {
 
-    private Long productId;
-    private String name;
-    private String description;
-    private Pricing pricing;
-    private boolean inStock;
-    private int stockQuantity;
-    private Double averageRating;
-    private long reviewCount;
-    private String createdAt; //YYYY-MM-DD
     private final String apiVersion = "v2";
+    private Integer orderId;
+    private String orderDate;  //YYYY-MM-DD
+    private String status;
+    private String paymentMethod;
 
-    public ProductV2Response() {
-    }
+    private CustomerSummary customer;
+    private List<OrderItemResponse> items;
 
-    public ProductV2Response(Long productId,
-                             String name,
-                             String description,
-                             Pricing pricing,
-                             boolean inStock,
-                             int stockQuantity,
-                             Double averageRating,
-                             long reviewCount,
-                             String createdAt) {
-        this.productId = productId;
-        this.name = name;
-        this.description = description;
+    private int itemCount;
+
+    private PricingSummaryV2 pricing;
+
+    private List<Map<String, String>> links;
+
+    public OrderV2Response() {}
+
+    public OrderV2Response(Integer orderId,
+                           String orderDate,
+                           String status,
+                           String paymentMethod,
+                           CustomerSummary customer,
+                           List<OrderItemResponse> items,
+                           int itemCount,
+                           PricingSummaryV2 pricing,
+                           List<Map<String, String>> links) {
+        this.orderId = orderId;
+        this.orderDate = orderDate;
+        this.status = status;
+        this.paymentMethod = paymentMethod;
+        this.customer = customer;
+        this.items = items;
+        this.itemCount = itemCount;
         this.pricing = pricing;
-        this.inStock = inStock;
-        this.stockQuantity = stockQuantity;
-        this.averageRating = averageRating;
-        this.reviewCount = reviewCount;
-        this.createdAt = createdAt;
+        this.links = links;
     }
 
-    public Long getProductId() {
-        return productId;
+    public String getApiVersion() { return apiVersion; }
+   
+    public Integer getOrderId() { return orderId; }
+    public void setOrderId(Integer orderId) { this.orderId = orderId; }
+
+    public String getOrderDate() { return orderDate; }
+    public void setOrderDate(String orderDate) { this.orderDate = orderDate; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+
+    public CustomerSummary getCustomer() { return customer; }
+    public void setCustomer(CustomerSummary customer) { this.customer = customer; }
+
+    public List<OrderItemResponse> getItems() { return items; }
+    public void setItems(List<OrderItemResponse> items) { this.items = items; }
+
+    public int getItemCount() { return itemCount; }
+    public void setItemCount(int itemCount) { this.itemCount = itemCount; }
+
+    public PricingSummaryV2 getPricing() { return pricing; }
+    public void setPricing(PricingSummaryV2 pricing) { this.pricing = pricing; }
+
+    public List<Map<String, String>> getLinks() { return links; }
+    public void setLinks(List<Map<String, String>> links) { this.links = links; }
+}
+
+
+```
+
+
+
+```java
+public class CustomerSummary {
+
+    private Integer customerId;
+    private String displayName; //first name + initial of last name
+    private String city;
+
+    public CustomerSummary() {}
+
+    public CustomerSummary(Integer customerId, String displayName, String city) {
+        this.customerId = customerId;
+        this.displayName = displayName;
+        this.city = city;
     }
 
-    public void setProductId(Long productId) {
+    public Integer getCustomerId() { return customerId; }
+    public void setCustomerId(Integer customerId) { this.customerId = customerId; }
+
+    public String getDisplayName() { return displayName; }
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
+
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
+}
+
+
+```
+
+
+
+```java
+import java.math.BigDecimal;
+
+public class OrderItemResponse {
+
+    private Integer productId;
+    private String productName;
+    private int quantity;
+    private BigDecimal unitPrice;
+    private BigDecimal lineTotal;
+
+    public OrderItemResponse() {}
+
+    public OrderItemResponse(Integer productId,
+                             String productName,
+                             int quantity,
+                             BigDecimal unitPrice,
+                             BigDecimal lineTotal) {
         this.productId = productId;
+        this.productName = productName;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+        this.lineTotal = lineTotal;
     }
 
-    public String getName() {
-        return name;
+    public Integer getProductId() { return productId; }
+    public void setProductId(Integer productId) { this.productId = productId; }
+
+    public String getProductName() { return productName; }
+    public void setProductName(String productName) { this.productName = productName; }
+
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+
+    public BigDecimal getUnitPrice() { return unitPrice; }
+    public void setUnitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; }
+
+    public BigDecimal getLineTotal() { return lineTotal; }
+    public void setLineTotal(BigDecimal lineTotal) { this.lineTotal = lineTotal; }
+}
+
+
+```
+
+
+
+
+
+
+```java
+public class DiscountSummary {
+
+    private String code;
+
+    public DiscountSummary() {}
+
+    public DiscountSummary(String code) {
+        this.code = code;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
+
+}
+
+
+```
+
+```java
+import java.math.BigDecimal;
+
+public class ConsistencyCheck {
+
+    private boolean totalsMatch;
+    private BigDecimal delta;
+
+    public ConsistencyCheck() {}
+
+    public ConsistencyCheck(boolean totalsMatch, BigDecimal delta) {
+        this.totalsMatch = totalsMatch;
+        this.delta = delta;
     }
 
-    public String getDescription() {
-        return description;
-    }
+    public boolean isTotalsMatch() { return totalsMatch; }
+    public void setTotalsMatch(boolean totalsMatch) { this.totalsMatch = totalsMatch; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Pricing getPricing() {
-        return pricing;
-    }
-
-    public void setPricing(Pricing pricing) {
-        this.pricing = pricing;
-    }
-
-    public boolean isInStock() {
-        return inStock;
-    }
-
-    public void setInStock(boolean inStock) {
-        this.inStock = inStock;
-    }
-
-    public int getStockQuantity() {
-        return stockQuantity;
-    }
-
-    public void setStockQuantity(int stockQuantity) {
-        this.stockQuantity = stockQuantity;
-    }
-
-    public Double getAverageRating() {
-        return averageRating;
-    }
-
-    public void setAverageRating(Double averageRating) {
-        this.averageRating = averageRating;
-    }
-
-    public long getReviewCount() {
-        return reviewCount;
-    }
-
-    public void setReviewCount(long reviewCount) {
-        this.reviewCount = reviewCount;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    @Override
-    public String toString() {
-        return "ProductV2Response{" +
-                "productId=" + productId +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", pricing=" + pricing +
-                ", inStock=" + inStock +
-                ", stockQuantity=" + stockQuantity +
-                ", averageRating=" + averageRating +
-                ", reviewCount=" + reviewCount +
-                ", createdAt='" + createdAt + '\'' +
-                ", apiVersion='" + apiVersion + '\'' +
-                '}';
-    }
+    public BigDecimal getDelta() { return delta; }
+    public void setDelta(BigDecimal delta) { this.delta = delta; }
 }
 
 ```
+
 
 ```java
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Pricing {
-
-    private Money base;
-    private Money discounted;
-    private boolean discountApplied;
-
-    public Pricing() {
-    }
-
-    public Pricing(Money base, Money discounted, boolean discountApplied) {
-        this.base = base;
-        this.discounted = discounted;
-        this.discountApplied = discountApplied;
-    }
-
-    public Money getBase() {
-        return base;
-    }
-
-    public void setBase(Money base) {
-        this.base = base;
-    }
-
-    public Money getDiscounted() {
-        return discounted;
-    }
-
-    public void setDiscounted(Money discounted) {
-        this.discounted = discounted;
-    }
-
-    public boolean isDiscountApplied() {
-        return discountApplied;
-    }
-
-    public void setDiscountApplied(boolean discountApplied) {
-        this.discountApplied = discountApplied;
-    }
-}
-
-```
-
-```java 
-
 import java.math.BigDecimal;
 
-public class Money {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PricingSummaryV2 {
 
-    private BigDecimal amount;
     private String currency;
+    private BigDecimal subtotal;
 
-    public Money() {
-    }
+    private boolean discountApplied;
+    private DiscountSummary discount; //omit if discountApplied=false
 
-    public Money(BigDecimal amount, String currency) {
-        this.amount = amount;
+    private BigDecimal total;
+
+    private ConsistencyCheck consistencyCheck;
+
+    public PricingSummaryV2() {}
+
+    public PricingSummaryV2(String currency,
+                            BigDecimal subtotal,
+                            boolean discountApplied,
+                            DiscountSummary discount,
+                            BigDecimal total,
+                            ConsistencyCheck consistencyCheck) {
         this.currency = currency;
+        this.subtotal = subtotal;
+        this.discountApplied = discountApplied;
+        this.discount = discount;
+        this.total = total;
+        this.consistencyCheck = consistencyCheck;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
+    public String getCurrency() { return currency; }
+    public void setCurrency(String currency) { this.currency = currency; }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+    public BigDecimal getSubtotal() { return subtotal; }
+    public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
 
-    public String getCurrency() {
-        return currency;
-    }
+    public boolean isDiscountApplied() { return discountApplied; }
+    public void setDiscountApplied(boolean discountApplied) { this.discountApplied = discountApplied; }
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
+    public DiscountSummary getDiscount() { return discount; }
+    public void setDiscount(DiscountSummary discount) { this.discount = discount; }
+
+    public BigDecimal getTotal() { return total; }
+    public void setTotal(BigDecimal total) { this.total = total; }
+
+    public ConsistencyCheck getConsistencyCheck() { return consistencyCheck; }
+    public void setConsistencyCheck(ConsistencyCheck consistencyCheck) { this.consistencyCheck = consistencyCheck; }
 }
-
-```
-
-```java
-
-
-public class ReviewResponse  {
-    private Long reviewId;
-    private Long productId;
-    private Reviewer reviewer;
-    private int rating;
-    private String comment;
-    private String createdAt; //ISO instant
-    private boolean verifiedPurchase;
-    private ProductRatingSummary productRatingSummary;
-
-    public ReviewResponse(Long reviewId, Long productId, Reviewer reviewer, int rating, String comment, String createdAt, boolean verifiedPurchase, ProductRatingSummary productRatingSummary) {
-        this.reviewId = reviewId;
-        this.productId = productId;
-        this.reviewer = reviewer;
-        this.rating = rating;
-        this.comment = comment;
-        this.createdAt = createdAt;
-        this.verifiedPurchase = verifiedPurchase;
-        this.productRatingSummary = productRatingSummary;
-    }
-
-    public ReviewResponse() {
-
-    }
-
-    public Long getReviewId() {
-        return reviewId;
-    }
-
-    public void setReviewId(Long reviewId) {
-        this.reviewId = reviewId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
-    public Reviewer getReviewer() {
-        return reviewer;
-    }
-
-    public void setReviewer(Reviewer reviewer) {
-        this.reviewer = reviewer;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public boolean isVerifiedPurchase() {
-        return verifiedPurchase;
-    }
-
-    public void setVerifiedPurchase(boolean verifiedPurchase) {
-        this.verifiedPurchase = verifiedPurchase;
-    }
-
-    public ProductRatingSummary getProductRatingSummary() {
-        return productRatingSummary;
-    }
-
-    public void setProductRatingSummary(ProductRatingSummary productRatingSummary) {
-        this.productRatingSummary = productRatingSummary;
-    }
-
-
-    @Override
-    public String toString() {
-        return "ReviewResponse{" +
-                "reviewId=" + reviewId +
-                ", productId=" + productId +
-                ", reviewer=" + reviewer +
-                ", rating=" + rating +
-                ", comment='" + comment + '\'' +
-                ", createdAt=" + createdAt +
-                ", verifiedPurchase=" + verifiedPurchase +
-                ", productRatingSummary=" + productRatingSummary +
-                '}';
-    }
-
- 
-}
-
-
-```
-```java
-public class Reviewer {
-
-    private String displayName;
-    private String city;
-
-    public Reviewer() {
-    }
-
-    public Reviewer(String displayName, String city) {
-        this.displayName = displayName;
-        this.city = city;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-}
-
-```
-
-```java
-
-public class ProductRatingSummary {
-
-    private Double averageRating;
-    private long reviewCount;
-
-    public ProductRatingSummary() {
-    }
-
-    public ProductRatingSummary(Double averageRating, long reviewCount) {
-        this.averageRating = averageRating;
-        this.reviewCount = reviewCount;
-    }
-
-    public Double getAverageRating() {
-        return averageRating;
-    }
-
-    public void setAverageRating(Double averageRating) {
-        this.averageRating = averageRating;
-    }
-
-    public long getReviewCount() {
-        return reviewCount;
-    }
-
-    public void setReviewCount(long reviewCount) {
-        this.reviewCount = reviewCount;
-    }
-}
-
 
 ```
