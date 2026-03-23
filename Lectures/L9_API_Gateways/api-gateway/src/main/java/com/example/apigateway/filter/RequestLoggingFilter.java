@@ -43,7 +43,7 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
         String headerId = request.getHeaders().getFirst(CORRELATION_HEADER);
         final String correlationId = (headerId != null) ? headerId : UUID.randomUUID().toString();
 
-        // Extract basic request information
+        //Extract basic request information
         InetSocketAddress remoteAddress = request.getRemoteAddress();
         String clientIp = remoteAddress != null
                 ? remoteAddress.getAddress().getHostAddress()
